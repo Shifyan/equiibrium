@@ -20,42 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: AppColor.background,
       body: Stack(
         children: [
-          // Background Glows (Optimized with RadialGradient)
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColor.primary.withValues(alpha: 0.15),
-                    AppColor.primary.withValues(alpha: 0),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -100,
-            left: -100,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColor.secondary.withValues(alpha: 0.15),
-                    AppColor.secondary.withValues(alpha: 0),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: CustomScrollView(
               slivers: [
