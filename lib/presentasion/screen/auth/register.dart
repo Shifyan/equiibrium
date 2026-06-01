@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:equiibrium/core/constants/app_text_style.dart';
 import 'package:equiibrium/core/constants/app_color.dart';
 import 'package:equiibrium/core/constants/app_routes.dart';
+import 'package:equiibrium/core/utils/email_checker.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -11,8 +12,51 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isAgreed = false;
+
+  void handleSubmitForm() {
+    String fullName = _fullNameController.text;
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    bool isEmailValid = EmailChecker.isValidEmail(email);
+    if (isEmailValid) {
+      if (_isAgreed) {
+        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Error"),
+            content: Text("Anda harus menyetujui syarat dan ketentuan"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text("Email tidak valid, silahkan cek kembali email anda."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               const SizedBox(height: 8),
                               TextField(
+                                controller: _fullNameController,
                                 decoration: InputDecoration(
                                   hintText: 'John Doe',
                                   prefixIcon: const Icon(
@@ -122,6 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               const SizedBox(height: 8),
                               TextField(
+                                controller: _emailController,
                                 decoration: InputDecoration(
                                   hintText: 'name@example.com',
                                   prefixIcon: const Icon(
@@ -146,6 +192,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               const SizedBox(height: 8),
                               TextField(
+                                controller: _passwordController,
                                 obscureText: !_isPasswordVisible,
                                 decoration: InputDecoration(
                                   hintText: '••••••••',
@@ -214,7 +261,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 width: double.infinity,
                                 height: 52,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: handleSubmitForm,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColor.onBackground,
                                     foregroundColor: AppColor.surface,
@@ -250,6 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       'Already have an account? ',
                                       style: AppTextStyle.bodySm.copyWith(
                                         color: AppColor.onSurfaceVariant,
+                                        fontSize: 12,
                                       ),
                                     ),
                                     GestureDetector(
@@ -264,6 +312,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         style: AppTextStyle.bodySm.copyWith(
                                           color: AppColor.primary,
                                           fontWeight: FontWeight.bold,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ),

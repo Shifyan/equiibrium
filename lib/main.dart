@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:equiibrium/core/theme/app_theme.dart';
 import 'package:equiibrium/core/constants/app_routes.dart';
+import 'package:equiibrium/core/constants/token_storage_services.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final bool isLoggedIn = await TokenStorageService().isLoggedIn();
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
   // This widget is the root of your application.
   @override
@@ -16,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: 'Equilibrium Finance',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      initialRoute: AppRoutes.dashboard,
+      initialRoute: isLoggedIn ? AppRoutes.dashboard : AppRoutes.login,
       routes: AppRoutes.routes,
     );
   }

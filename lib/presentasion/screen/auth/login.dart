@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:equiibrium/core/constants/app_text_style.dart';
 import 'package:equiibrium/core/constants/app_color.dart';
 import 'package:equiibrium/core/constants/app_routes.dart';
+import 'package:equiibrium/core/utils/email_checker.dart';
+import 'package:equiibrium/core/constants/token_storage_services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,7 +13,32 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+
+  void handleSubmitForm(String email, String password) {
+    bool isEmailValid = EmailChecker.isValidEmail(email);
+    if (isEmailValid) {
+      TokenStorageService().saveToken(email);
+      debugPrint("User is logged in");
+      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text("Email tidak valid, silahkan cek kembali email anda."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 8),
                               TextField(
+                                controller: _emailController,
                                 decoration: InputDecoration(
                                   hintText: 'name@example.com',
                                   prefixIcon: const Icon(
@@ -143,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 8),
                               TextField(
+                                controller: _passwordController,
                                 obscureText: !_isPasswordVisible,
                                 decoration: InputDecoration(
                                   hintText: '••••••••',
@@ -177,7 +206,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: double.infinity,
                                 height: 52,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => handleSubmitForm(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColor.onBackground,
                                     foregroundColor: AppColor.surface,
@@ -303,6 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       'New to Equilibrium? ',
                                       style: AppTextStyle.bodySm.copyWith(
                                         color: AppColor.onSurfaceVariant,
+                                        fontSize: 12,
                                       ),
                                     ),
                                     GestureDetector(
@@ -317,6 +350,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         style: AppTextStyle.bodySm.copyWith(
                                           color: AppColor.primary,
                                           fontWeight: FontWeight.bold,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ),
